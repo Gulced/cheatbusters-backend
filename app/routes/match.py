@@ -1,5 +1,6 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, status
 from typing import List
+import asyncio
 
 from app.services.analyze import analyze_service
 from app.schemas.response import AnalysisResponse
@@ -23,12 +24,22 @@ async def analyze_exams_endpoint(files: List[UploadFile] = File(...)):
             raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, f"Desteklenmeyen dosya: {file.filename}")
 
         content = await file.read()
-        image_files.append({"filename": file.filename, "content": content})
+        # 🔁 Artık filename yerine Flutter'dan gelen "student_name" kullanılmalı ama burada hala filename var.
+        # Flutter'da bu ismi UploadFile'e eklemeyi unutma
+        image_files.append({
+            "student_name": file.filename,  # ✔️ 'filename' yerine 'student_name' kullanılacaksa Flutter'da dikkat edilmeli
+            "content": content
+        })
 
     try:
-        result = analyze_service.analyze_documents(image_files)
+        # ✅ analyze_documents fonksiyonu async olmadığı için executor içinde çalıştırıyoruz
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, analyze_service.analyze_documents, image_files)
+
         if result.get("error"):
             raise HTTPException(status.HTTP_400_BAD_REQUEST, result["error"])
+
         return AnalysisResponse(**result)
+
     except Exception as e:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, f"Beklenmedik bir sunucu hatası oluştu: {e}")
