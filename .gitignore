@@ -1,0 +1,16 @@
+# Sanal ortam klasörü
+.venv/
+venv/
+env/
+
+# Python cache dosyaları
+__pycache__/
+*.pyc
+
+# Hassas bilgileri içeren .env dosyası
+.env
+
+# IDE ve OS özel dosyaları
+.idea/
+.vscode/
+*.DS_Store

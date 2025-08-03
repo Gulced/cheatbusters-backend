@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+google-generativeai
+scikit-learn
+langchain
+langchain-google-genai
+pillow
+python-multipart
+numpy
