@@ -1,15 +1,18 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
 class DetailedAnalysis(BaseModel):
     is_cheating: bool
     reason: str
     suspicious_parts: List[str]
 
+
 class CheatingReport(BaseModel):
     students: List[str]
-    similarity_score: float
+    similarity_score: Optional[float] = None  # ✅ Opsiyonel hale getirildi
     analysis: DetailedAnalysis
+
 
 class AnalysisResponse(BaseModel):
     total_documents_processed: int

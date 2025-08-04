@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 from concurrent.futures import ThreadPoolExecutor
+import time  # ⏱️ Eklendi
 
 from app.services.vision import vision_service
 from app.services.embedding import embedding_service
@@ -60,11 +61,16 @@ class AnalyzeService:
                 text_map[student_pair[1]]
             )
 
-            final_report.append({
+            # ✅ Her analiz sonrası 3 saniye bekle
+            time.sleep(4)
+
+            report_entry = {
                 "students": student_pair,
                 "similarity_score": similarity,
                 "analysis": analysis
-            })
+            }
+
+            final_report.append(report_entry)
 
         cheating_pairs = [r for r in final_report if r["analysis"].get("is_cheating")]
 
